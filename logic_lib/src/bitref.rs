@@ -53,13 +53,7 @@ pub fn op(inputs: &Vec<Rc<BitRef>>, op: Op) -> State {
         }
     }
 
-    let mut ret = {
-        if op == Op::AND {
-            vec![true; n]
-        } else {
-            vec![false; n]
-        }
-    };
+    let mut ret = vec![op == Op::AND || op == Op::NAND; n];
 
     for a in inputs {
         let a = a.read();
