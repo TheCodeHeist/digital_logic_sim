@@ -33,6 +33,7 @@ impl BitRef {
     }
 }
 
+#[derive(Eq, PartialEq, PartialOrd, Ord)]
 pub enum Op {
     NOT,
     AND,
@@ -51,25 +52,31 @@ pub fn op(inputs: &Vec<Rc<BitRef>>, op: Op) -> State {
             return State::Unknown;
         }
     }
-    let mut ret = vec![false; n];
+
+    let mut ret = {
+        if op == Op::AND {
+            vec![true; n]
+        } else {
+            vec![false; n]
+        }
+    };
+
     for a in inputs {
         let a = a.read();
         if let State::Bits(ref a) = *a {
             for i in 0..n {
                 match op {
-                    Op::AND => ret[i] = a[i] & ret[i],
+                    Op::AND | Op::NAND => ret[i] = a[i] & ret[i],
+                    Op::OR | Op::NOR => ret[i] = a[i] | ret[i],
+                    Op::XOR | Op::XNOR => ret[i] = a[i] ^ ret[i],
                     Op::NOT => ret[i] = !a[i],
-                    Op::OR => ret[i] = a[i] | ret[i],
-                    Op::XOR => ret[i] = a[i] ^ ret[i],
-                    Op::NAND => ret[i] = a[i] & ret[i],
-                    Op::NOR => ret[i] = a[i] | ret[i],
-                    Op::XNOR => ret[i] = a[i] ^ ret[i],
                 }
             }
         } else {
             return State::DontCare;
         }
     }
+
     for i in 0..n {
         match op {
             Op::NAND => ret[i] = !ret[i],
