@@ -1,0 +1,24 @@
+#define comp_0
+- type: NOR
+
+#define comp_1
+- type: PIN
+- tristate: false
+
+#define comp_2
+- type: PIN
+- tristate: false
+
+#define comp_3
+- type: PIN
+- output: true
+- facing: west
+
+#define comp_4
+- type: NOR
+
+#attach comp_0 comp_3
+#attach comp_0 comp_4
+#attach comp_1 comp_0
+#attach comp_2 comp_4
+#attach comp_4 comp_0
